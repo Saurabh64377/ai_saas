@@ -1,6 +1,6 @@
 
-import React from 'react'
-import { Routes , Route } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Routes , Route, useFetcher } from 'react-router-dom'
 import Home from './Pages/Home'
 import Layout from './Pages/Layout'
 import DashBoard from './Pages/DashBoard'
@@ -11,8 +11,16 @@ import RemoveBackground from './Pages/RemoveBackground'
 import RemoveObject from './Pages/RemoveObject'
 import ReviewResume from './Pages/ReviewResume'
 import Community from './Pages/Community'
+import { useAuth } from '@clerk/clerk-react'
 
 const App = () => {
+
+   const {getToken} = useAuth()
+
+   useEffect(()=>{
+        getToken().then((token)=>console.log(token))
+   } , [])
+
   return (
     <div>
        <Routes>

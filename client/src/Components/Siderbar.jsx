@@ -61,7 +61,7 @@ const Siderbar = ({ siderBar, setSidebar }) => {
                 <div className='px-6 mt-5 text-sm font-medium text-gray-500'>
                     {
                         navItems.map(({to ,label ,Icon})=>(
-                            <NavLink  to={to} key={to} end={to==='/ai'} onClick={()=>setSidebar(false)} className={({isActive})=>`px-3.5 py-2.5 flex items-center gap-3 rounded ${isActive?'bg-gradient-to-r from-[#3C81F6] to-[#9234EA] text-white':''}`} >
+                            <NavLink  to={to} key={to} end={to==='/ai'} onClick={()=>setSidebar(false)} className={({isActive})=>`px-3.5 py-2.5 flex items-center gap-3 rounded ${isActive?'bg-linear-to-r from-[#3C81F6] to-[#9234EA] text-white':''}`} >
                                  {
                                     ({isActive})=>(
                                         <>
