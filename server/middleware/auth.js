@@ -1,31 +1,38 @@
-import {clerkClient} from '@clerk/express'
+import { clerkClient } from '@clerk/express'
 
-export const auth = async(req,res,next)=>{
+export const auth = async (req, res, next) => {
   try {
+    const { userId, has } = req.auth()   // ❗ no await here
 
-    const {userId ,has} = await req.auth()
-    const hasPremiumPlan = await has({plan:'premium'})
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" })
+    }
 
+    const hasPremiumPlan = await has({ plan: 'premium' })
 
     const user = await clerkClient.users.getUser(userId)
 
-    if(!hasPremiumPlan && user.privateMetaadta.free_usage){
-        req.free.usage = user.privateMetadata.free_usage
-    }else{
-        await clerkClient.users.updateUserMetadata(userId , {
-            privateMetadata:{
-                free_usage:0
-            }
-        })
+    // Initialize if not present
+    const freeUsage = user.privateMetadata?.free_usage || 0
 
-        req.free_usage = 0
+    if (!hasPremiumPlan) {
+      req.free_usage = freeUsage
+    } else {
+      // Reset free usage if premium
+      await clerkClient.users.updateUserMetadata(userId, {
+        privateMetadata: {
+          free_usage: 0
+        }
+      })
+
+      req.free_usage = 0
     }
 
-    req.plan = hasPremiumPlan?'premium':'free'
+    req.plan = hasPremiumPlan ? 'premium' : 'free'
+
     next()
-    
   } catch (error) {
-     console.error(error)
-     res.json({success:false , message:error.message})
+    console.error(error)
+    res.status(500).json({ success: false, message: error.message })
   }
 }
